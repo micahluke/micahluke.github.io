@@ -1,4 +1,21 @@
 body {
-	background-color: black;
-	color: white;
+	background-color: blanchedalmond;
+	color: black;
+	font-family: Verdana, Helvetica, sans-serif;
+	/*text-align: center;*/
+}
+
+.title {
+	/*text-align: center;*/
+}
+
+.entry {
+	/*background-color: white;*/
+	margin-bottom: 5px;
+	padding: 10px;
+}
+
+.entry:hover {
+	cursor: pointer;
+	font-weight: bold;
 }
