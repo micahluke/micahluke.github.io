@@ -53,6 +53,7 @@ var entries = [
 entries.reverse();
 var journalDiv = document.getElementsByClassName('journal')[0];
 var playerDiv = document.getElementsByClassName('player')[0];
+var audioSource = document.getElementById('audioSource');
 
 // Create the journal entry divs
 for (var i = 0, l = entries.length; l > i; i++) {
@@ -72,12 +73,16 @@ for (var i = 0, l = entries.length; l > i; i++) {
 function launchPlayer(event) {
 
 	// get filename
-	let entry = entries[event.originalTarget.id];
+	console.log(event);
+	let entry = entries[event.target.id];
 	let filename = entry['year'] + '-' + entry['month'] + '-' + entry['day'];
 	if (entry.number) {
 		filename += '-' + entry['number'];
 	}
-	filename += '.mp3'
-
-	
+	filename = 'audio/' + filename + '.mp3'
+	audioSource.src = filename;
+	audio.load();
+	audio.play();
+	console.log('audio');
+	console.log(audioSource.src);
 }
