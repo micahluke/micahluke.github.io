@@ -51,38 +51,79 @@ var entries = [
 }
 ];
 entries.reverse();
+
 var journalDiv = document.getElementsByClassName('journal')[0];
 var playerDiv = document.getElementsByClassName('player')[0];
 var audioSource = document.getElementById('audioSource');
 
-// Create the journal entry divs
-for (var i = 0, l = entries.length; l > i; i++) {
-	entry = entries[i];
-	entryDiv = document.createElement("div");
-	var date = entry['month'] + '/' + entry['day'] + '/' + entry['year'];
-	entryDiv.innerHTML = date + ': ' + entry.title;
-	entryDiv.classList.add('entry');
-	entryDiv.id = i;
+var currentEntryIndex = -1;
 
-	// onclick functionality
-	entryDiv.onclick = launchPlayer;
+initialize();
 
-	journalDiv.appendChild(entryDiv);
+function initialize() {
+	for (var i = 0, l = entries.length; l > i; i++) {
+		entry = entries[i];
+		entryDiv = document.createElement("div");
+		var date = entry['month'] + '/' + entry['day'] + '/' + entry['year'];
+		entryDiv.innerHTML = date + ': ' + entry.title;
+		entryDiv.classList.add('entry');
+		entryDiv.id = i;
+	
+		// onclick functionality
+		entryDiv.onclick = entryClick;
+	
+		journalDiv.appendChild(entryDiv);
+	}
+	
 }
 
-function launchPlayer(event) {
+function currentEntry() {
+	if (currentEntryIndex > -1) {
+		return entries[currentEntryIndex];
+	} else {
+		return false;
+	}
+}
 
-	// get filename
-	console.log(event);
-	let entry = entries[event.target.id];
+function entryClick(event) {
+	newEntryIndex = event.target.id;
+
+	if (currentEntry()) {
+		// there is a selected entry already.
+		if (newEntryIndex === currentEntryIndex) {
+			// the selected entry is selected again.
+			audioToggle();
+		} else {
+			currentEntryIndex = newEntryIndex;
+			loadAudio();
+		}
+	} else {
+		// first time an entry has been selected.
+		currentEntryIndex = newEntryIndex;
+		loadAudio();
+	}
+}
+
+function audioToggle() {
+	if (audio.paused) {
+		audio.play();
+	} else {
+		audio.pause();
+	}
+}
+
+function loadAudio() {
+	audioSource.src = buildAudioFilePath();
+	audio.load();
+	audio.play();
+}
+
+function buildAudioFilePath() {
+	let entry = currentEntry();
 	let filename = entry['year'] + '-' + entry['month'] + '-' + entry['day'];
-	if (entry.number) {
+	if (entry && entry.number) {
 		filename += '-' + entry['number'];
 	}
 	filename = 'audio/' + filename + '.mp3'
-	audioSource.src = filename;
-	audio.load();
-	audio.play();
-	console.log('audio');
-	console.log(audioSource.src);
+	return filename;
 }
