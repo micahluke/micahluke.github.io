@@ -55,17 +55,20 @@ entries.reverse();
 var journalDiv = document.getElementsByClassName('journal')[0];
 var playerDiv = document.getElementsByClassName('player')[0];
 var audioSource = document.getElementById('audioSource');
+var audioTitle = document.getElementById('audioTitle');
 
 var currentEntryIndex = -1;
 
 initialize();
 
 function initialize() {
+
+	setupAudioEndedEventListener();  
+
 	for (var i = 0, l = entries.length; l > i; i++) {
 		entry = entries[i];
 		entryDiv = document.createElement("div");
-		var date = entry['month'] + '/' + entry['day'] + '/' + entry['year'];
-		entryDiv.innerHTML = date + ': ' + entry.title;
+		entryDiv.innerHTML = buildEntryDate(entry) + ': ' + entry.title;
 		entryDiv.classList.add('entry');
 		entryDiv.id = i;
 	
@@ -75,6 +78,19 @@ function initialize() {
 		journalDiv.appendChild(entryDiv);
 	}
 	
+}
+
+function setupAudioEndedEventListener() {
+	audio.addEventListener('ended', (event) => {
+		if (currentEntryIndex < entries.length - 1) {
+			// this is not the last entry, so autoplay the next one.
+			console.log(currentEntryIndex);
+			currentEntryIndex++;
+			console.log(currentEntryIndex);
+			loadAudio(currentEntry());
+		} 
+		});
+
 }
 
 function currentEntry() {
@@ -95,12 +111,12 @@ function entryClick(event) {
 			audioToggle();
 		} else {
 			currentEntryIndex = newEntryIndex;
-			loadAudio();
+			loadAudio(currentEntry());
 		}
 	} else {
 		// first time an entry has been selected.
 		currentEntryIndex = newEntryIndex;
-		loadAudio();
+		loadAudio(currentEntry());
 	}
 }
 
@@ -112,18 +128,27 @@ function audioToggle() {
 	}
 }
 
-function loadAudio() {
-	audioSource.src = buildAudioFilePath();
+function loadAudio(entry) {
+	audioSource.src = buildAudioFilePath(entry);
 	audio.load();
 	audio.play();
+	updateAudioTitle(entry);
 }
 
-function buildAudioFilePath() {
-	let entry = currentEntry();
+function buildAudioFilePath(entry) {
+	console.log(entry);
 	let filename = entry['year'] + '-' + entry['month'] + '-' + entry['day'];
 	if (entry && entry.number) {
 		filename += '-' + entry['number'];
 	}
 	filename = 'audio/' + filename + '.mp3'
 	return filename;
+}
+
+function buildEntryDate(entry) {
+	return entry['month'] + '/' + entry['day'] + '/' + entry['year']
+}
+
+function updateAudioTitle(entry) {
+	audioTitle.innerText = buildEntryDate(entry) + ': ' + entry.title;
 }

@@ -33,12 +33,13 @@ body {
 
 .entry:hover {
 	cursor: pointer;
-	font-weight: bold;
+	/* font-weight: bold; */
+	color: rgb(100, 100, 100);
 }
 
 .player {
 	position: absolute;
-	height: 60px;
+	/* height: 110px; */
 	width: 99%;
 	bottom: 0;
 	background-color: blanchedalmond;
@@ -48,4 +49,15 @@ body {
 	width: 99%;
 	max-width: 800px;
 	/* background-color: blanchedalmond; */
+}
+
+#audioTitle {
+	/* font-weight: bold; */
+	/* background-color: blue; */
+	margin-bottom: 0px;
+	margin-top: 8px;
+}
+
+audio::-webkit-media-controls-panel {
+	background-color: blanchedalmond;
 }
