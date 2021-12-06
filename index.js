@@ -65,6 +65,30 @@ function initialize() {
 
 	setupAudioEndedEventListener();  
 
+	document.body.onkeyup = function(e){
+		// console.log(e.code);
+		switch(e.code) {
+			case 'Space':
+				// toggle audio
+				audioToggle();
+				break;
+			case 'ArrowUp':
+				// play previous song
+				playPreviousEntry();
+				break;
+			case 'ArrowDown':
+				// play next song
+				playeNextEntry();
+				break;
+			case 'ArrowRight':
+				// skip ahead 15 seconds
+				break;
+			case 'ArrowLeft':
+				// go back 15 seconds
+				break;
+		}
+	}
+	
 	for (var i = 0, l = entries.length; l > i; i++) {
 		entry = entries[i];
 		entryDiv = document.createElement("div");
@@ -82,15 +106,32 @@ function initialize() {
 
 function setupAudioEndedEventListener() {
 	audio.addEventListener('ended', (event) => {
-		if (currentEntryIndex < entries.length - 1) {
-			// this is not the last entry, so autoplay the next one.
-			console.log(currentEntryIndex);
-			currentEntryIndex++;
-			console.log(currentEntryIndex);
-			loadAudio(currentEntry());
-		} 
+			playeNextEntry();
 		});
 
+}
+
+function playeNextEntry() {
+	if (currentEntryIndex < entries.length - 1) {
+		console.log(currentEntryIndex);
+		playEntry(parseInt(currentEntryIndex) + 1);
+	} 
+}
+
+function playPreviousEntry() {
+	if (currentEntryIndex > 0) {
+		console.log(currentEntryIndex);
+		playEntry(parseInt(currentEntryIndex) - 1);
+	} 
+}
+
+function playEntry(newIndex) {
+	updateEntryFontWeight(currentEntryIndex, '400');
+	console.log(currentEntryIndex);
+	currentEntryIndex = newIndex;
+	console.log(currentEntryIndex);
+	updateEntryFontWeight(currentEntryIndex, 'bold');
+	loadAudio(currentEntry());
 }
 
 function currentEntry() {
@@ -110,14 +151,19 @@ function entryClick(event) {
 			// the selected entry is selected again.
 			audioToggle();
 		} else {
-			currentEntryIndex = newEntryIndex;
-			loadAudio(currentEntry());
+			playEntry(newEntryIndex);
 		}
 	} else {
 		// first time an entry has been selected.
 		currentEntryIndex = newEntryIndex;
+		updateEntryFontWeight(currentEntryIndex, 'bold');
 		loadAudio(currentEntry());
 	}
+}
+
+function updateEntryFontWeight(entryIndex, weight) {
+	// console.log(entryIndex);
+	journalDiv.children[entryIndex].style.fontWeight = weight;
 }
 
 function audioToggle() {
@@ -136,7 +182,6 @@ function loadAudio(entry) {
 }
 
 function buildAudioFilePath(entry) {
-	console.log(entry);
 	let filename = entry['year'] + '-' + entry['month'] + '-' + entry['day'];
 	if (entry && entry.number) {
 		filename += '-' + entry['number'];
