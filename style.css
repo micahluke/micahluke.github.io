@@ -32,11 +32,21 @@ body {
 	user-select: none;
 }
 
+.description {
+	/* max-height: 0px; */
+	/* transition: max-height 0.15s ease-out; */
+	margin-bottom: 10px;
+	font-size: 10pt;
+}
+
 .entry:hover {
 	cursor: pointer;
-	/* font-weight: bold; */
 	color: rgb(100, 100, 100);
 }
+/* 
+.entry:hover + .description {
+	max-height: 500px;
+} */
 
 .player {
 	position: absolute;

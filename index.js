@@ -53,7 +53,7 @@ var entries = [
 	'year': '21',
 	'month': '12',
 	'day': '7',
-	'title': 'vomit.'
+	'title': 'vomit.',
 }
 ];
 entries.reverse();
@@ -96,16 +96,25 @@ function initialize() {
 	}
 	
 	for (var i = 0, l = entries.length; l > i; i++) {
-		entry = entries[i];
+		entryData = entries[i];
+
+		entryWrapperDiv = document.createElement("div");
+
+		// entry
 		entryDiv = document.createElement("div");
-		entryDiv.innerHTML = buildEntryDate(entry) + ': ' + entry.title;
+		entryDiv.innerHTML = buildEntryDate(entryData) + ': ' + entryData.title;
 		entryDiv.classList.add('entry');
 		entryDiv.id = i;
-	
-		// onclick functionality
 		entryDiv.onclick = entryClick;
+
+		// entry description
+		descriptionDiv = document.createElement('div');
+		descriptionDiv.innerText = '';
+		descriptionDiv.classList.add('description');
 	
-		journalDiv.appendChild(entryDiv);
+		entryWrapperDiv.appendChild(entryDiv);
+		entryWrapperDiv.appendChild(descriptionDiv);
+		journalDiv.appendChild(entryWrapperDiv);
 	}
 	
 }
@@ -119,25 +128,31 @@ function setupAudioEndedEventListener() {
 
 function playeNextEntry() {
 	if (currentEntryIndex < entries.length - 1) {
-		console.log(currentEntryIndex);
 		playEntry(parseInt(currentEntryIndex) + 1);
 	} 
 }
 
 function playPreviousEntry() {
 	if (currentEntryIndex > 0) {
-		console.log(currentEntryIndex);
 		playEntry(parseInt(currentEntryIndex) - 1);
 	} 
 }
 
 function playEntry(newIndex) {
 	updateEntryFontWeight(currentEntryIndex, '400');
-	console.log(currentEntryIndex);
+	removeDescription(currentEntryIndex);
 	currentEntryIndex = newIndex;
-	console.log(currentEntryIndex);
 	updateEntryFontWeight(currentEntryIndex, 'bold');
+	addDescription(currentEntryIndex);
 	loadAudio(currentEntry());
+}
+
+function addDescription(entryIndex) {
+	getDescriptionDiv(entryIndex).innerText = currentEntry()['description'] ?? '';
+}
+
+function removeDescription(entryIndex) {
+	getDescriptionDiv(entryIndex).innerText = '';
 }
 
 function currentEntry() {
@@ -157,19 +172,28 @@ function entryClick(event) {
 			// the selected entry is selected again.
 			audioToggle();
 		} else {
+			// new entry is selected
 			playEntry(newEntryIndex);
 		}
 	} else {
 		// first time an entry has been selected.
 		currentEntryIndex = newEntryIndex;
 		updateEntryFontWeight(currentEntryIndex, 'bold');
+		addDescription(currentEntryIndex);
 		loadAudio(currentEntry());
 	}
 }
 
 function updateEntryFontWeight(entryIndex, weight) {
-	// console.log(entryIndex);
-	journalDiv.children[entryIndex].style.fontWeight = weight;
+	getEntryDiv(entryIndex).style.fontWeight = weight;
+}
+
+function getEntryDiv(entryIndex) {
+	return journalDiv.children[entryIndex].firstChild;
+}
+
+function getDescriptionDiv(entryIndex) {
+	return journalDiv.children[entryIndex].lastChild;
 }
 
 function audioToggle() {
