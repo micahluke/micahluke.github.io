@@ -41,7 +41,7 @@ body {
 
 .entry:hover {
 	cursor: pointer;
-	color: rgb(100, 100, 100);
+	color: rgb(50, 50, 50);
 }
 /* 
 .entry:hover + .description {
